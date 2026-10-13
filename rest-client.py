@@ -41,7 +41,34 @@ def doAdd(addr, debug=False):
 
 
 def doDotProduct(addr, debug=False):
-    pass
+
+    headers = {'content-type': 'application/json'}
+
+    vector_a = [4, 5, 7, 3, 1]
+    vector_b = [5, 8, 3, 4, 7]
+
+    data = {
+        'vector_a': vector_a,
+        'vector_b': vector_b
+    }
+
+    dot_url = addr + '/api/dotproduct'
+
+    response = requests.post(
+        dot_url,
+        json=data,
+        headers=headers
+    )
+
+    response.raise_for_status()
+    result = response.json()
+
+    expected = sum(a * b for a, b in zip(vector_a, vector_b))
+    assert result['dotproduct'] == expected
+
+    if debug:
+        print("Response is", response)
+        print(result)
 
 
 def doJsonImage(addr, debug=False):

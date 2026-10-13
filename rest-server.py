@@ -51,7 +51,26 @@ def rawimage():
 
 @app.route('/api/dotproduct', methods=['POST'])
 def dotproduct():
-    pass
+    r = request
+    data = r.get_json()
+
+    vector_a = data['vector_a']
+    vector_b = data['vector_b']
+
+    if len(vector_a) != len(vector_b):
+        return {'error': 'Vector lengths must match'}, 400
+    
+    result = sum(a * b for a, b in zip(vector_a, vector_b))
+
+    response = {'dotproduct': result}
+
+    response_pickled = jsonpickle.encode(response)
+
+    return Response(
+        response=response_pickled,
+        status=200,
+        mimetype="application/json"
+    )
 
 
 @app.route('/api/jsonimage', methods=['POST'])
