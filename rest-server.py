@@ -5,6 +5,7 @@ import jsonpickle
 from PIL import Image
 import io
 import argparse
+import base64
 
 # Initialize the Flask application
 app = Flask(__name__)
@@ -80,7 +81,32 @@ def dotproduct():
 
 @app.route('/api/jsonimage', methods=['POST'])
 def jsonimage():
-    pass
+    r = request
+
+    # Convert the JSON image data to a PIL image type
+    try:
+        data = r.get_json()
+
+        # Decode Base64 string into binary image data
+        img_data = base64.b64decode(data['image'])
+
+        ioBuffer = io.BytesIO(img_data)
+        img = Image.open(ioBuffer)
+
+        response = {
+            'width': img.size[0],
+            'height': img.size[1]
+        }
+    except Exception as e:
+        print("Error processing JSON image:", e)
+        response = {'width': 0, 'height': 0}
+
+    response_pickled = jsonpickle.encode(response)
+    return Response(
+        response=response_pickled,
+        status=200,
+        mimetype="application/json"
+    )
 
 if __name__ == '__main__':
     # Parse command-line arguments

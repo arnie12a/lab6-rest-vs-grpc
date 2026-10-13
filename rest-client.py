@@ -79,7 +79,24 @@ def doDotProduct(addr, debug=False):
 
 def doJsonImage(addr, debug=False):
 
-    pass
+    # prepare headers for http request
+    headers = {'content-type': 'application/json'}
+
+    img = open('Flatirons_Winter_Sunrise_edit_2.jpg', 'rb').read()
+
+    # Encode binary image into Base64 string
+    encoded_img = base64.b64encode(img).decode('utf-8')
+
+    # Create JSON payload
+    data = {'image': encoded_img}
+
+    # send http request with image and receive response
+    image_url = addr + '/api/jsonimage'
+    response = requests.post(image_url, json=data, headers=headers)
+
+    if debug:
+        print("Response is", response)
+        print(json.loads(response.text))
     
 
 
