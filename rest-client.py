@@ -42,29 +42,35 @@ def doAdd(addr, debug=False):
 
 def doDotProduct(addr, debug=False):
 
-    headers = {'content-type': 'application/json'}
+    # Generate two vectors of length 100
+    a = [random.random() for _ in range(100)]
+    b = [random.random() for _ in range(100)]
 
-    vector_a = [4, 5, 7, 3, 1]
-    vector_b = [5, 8, 3, 4, 7]
-
+    # Prepare JSON payload
     data = {
-        'vector_a': vector_a,
-        'vector_b': vector_b
+        'a': a,
+        'b': b
     }
 
+    # Define endpoint
     dot_url = addr + '/api/dotproduct'
 
+    # Send POST request
     response = requests.post(
         dot_url,
-        json=data,
-        headers=headers
+        json=data
     )
 
     response.raise_for_status()
+
+    # Extract server result
     result = response.json()
 
-    expected = sum(a * b for a, b in zip(vector_a, vector_b))
-    assert result['dotproduct'] == expected
+    # Calculate expected result locally
+    expected = sum(x * y for x, y in zip(a, b))
+
+    # Verify server calculation
+    assert abs(result['dotproduct'] - expected) < 1e-9
 
     if debug:
         print("Response is", response)
@@ -72,7 +78,9 @@ def doDotProduct(addr, debug=False):
 
 
 def doJsonImage(addr, debug=False):
+
     pass
+    
 
 
 # ---------------------------------------------------------
